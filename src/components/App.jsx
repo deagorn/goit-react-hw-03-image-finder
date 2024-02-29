@@ -17,7 +17,6 @@ export class App extends Component {
     page:1,
   }
 
-
   async componentDidMount() {
     try {
       const {total, hits} = await fetchImg();
