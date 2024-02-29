@@ -1,12 +1,13 @@
+import React, { Component } from 'react'
+
 import { fetchImg } from "services/api";
 import { Button } from "./Button/Button";
 import { ImageGallery } from "./ImageGallery/ImageGallery";
 import Searchbar from "./Searchbar/Searchbar";
-import s from './App.module.css'
-
-
-import React, { Component } from 'react'
 import Loader from "./Loader/Loader";
+import Modal from "./Modal/Modal";
+
+import s from './App.module.css'
 
 
 export class App extends Component {
@@ -16,7 +17,9 @@ export class App extends Component {
     loading: false,
     error: null,
     page: 1,
-    query:'',
+    query: '',
+    isOpen: false,
+    content: null,
   }
 
   async componentDidMount() {
@@ -49,6 +52,10 @@ export class App extends Component {
     
   }
 
+  handleToggleModal = () => {
+		this.setState(prev => ({ isOpen: !prev.isOpen }))
+	}
+
   handleSetQuery = (query) => {
     this.setState({query, items:[], page: 1})
   }
@@ -57,16 +64,21 @@ export class App extends Component {
     this.setState(prev => ({ page: prev.page + 1 }));
   }
 
+  handleSeeMoreInfo = content => {
+		this.setState({ isOpen: true, content })
+	}
+
   render() {
-    const { items, loading, totalImg} = this.state;
+    const { items, loading, totalImg, isOpen, content } = this.state;
     return (
       <div className={s.app}>
         <Searchbar handleSetQuery={this.handleSetQuery} />
-        <ImageGallery images={items} />
+        <ImageGallery images={items}  openModal={this.handleSeeMoreInfo}/>
         
         {loading && <Loader/>}
         {items.length && items.length < totalImg && <Button onClick={this.handleLoadMore} />}
         
+        {isOpen && <Modal closeModal={this.handleToggleModal} content={content}></Modal>}
 
     </div>
     )
