@@ -44,14 +44,15 @@
 .button:hover{opacity: 1;}
 
   .button_label{
-  position: absolute;
+  color: #0b024f;
+  /* position: absolute; */
   width: 1px;
   height: 1px;
   padding: 0;
   overflow: hidden;
-  clip: rect(0, 0, 0, 0);
+  /* clip: rect(0, 0, 0, 0); */
   white-space: nowrap;
-  clip-path: inset(50%);
+  /* clip-path: inset(50%); */
   border: 0;
   }
 

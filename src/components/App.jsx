@@ -6,6 +6,7 @@ import s from './App.module.css'
 
 
 import React, { Component } from 'react'
+import Loader from "./Loader/Loader";
 
 
 export class App extends Component {
@@ -14,29 +15,42 @@ export class App extends Component {
     totalImg: 0,
     loading: false,
     error: null,
-    page:1,
+    page: 1,
+    query:'',
   }
 
   async componentDidMount() {
     try {
+      this.setState({loading:true})
       const {total, hits} = await fetchImg();
       this.setState({ items: hits, totalImg: total });
     } catch (error) {
       this.setState({ error });
     }
+    finally {
+      this.setState({loading:false})
+    }
   }
 
   async componentDidUpdate(prevProps, prevState) {
-    if (prevState.page !== this.state.page) {
+    if (prevState.page !== this.state.page || prevState.query!==this.state.query) {
       try {
-        const { total, hits } = await fetchImg({ page: this.state.page });
-        this.setState(prev => ({items:[...prev.items, ...hits], total}));
+        this.setState({ loading: true });
+        const { total, hits } = await fetchImg({ page: this.state.page, q: this.state.query });
+        this.setState(prev => ({ items: [...prev.items, ...hits], totalImg: total }));
 
       } catch (error) {
         
       }
+      finally {
+      this.setState({loading:false})
+    }
     }
     
+  }
+
+  handleSetQuery = (query) => {
+    this.setState({query, items:[], page: 1})
   }
 
   handleLoadMore = () => {
@@ -44,12 +58,15 @@ export class App extends Component {
   }
 
   render() {
-    const { items } = this.state;
+    const { items, loading, totalImg} = this.state;
     return (
       <div className={s.app}>
-      <Searchbar />
-        <ImageGallery images={ items } />
-        <Button onClick={this.handleLoadMore} />
+        <Searchbar handleSetQuery={this.handleSetQuery} />
+        <ImageGallery images={items} />
+        
+        {loading && <Loader/>}
+        {items.length && items.length < totalImg && <Button onClick={this.handleLoadMore} />}
+        
 
     </div>
     )
