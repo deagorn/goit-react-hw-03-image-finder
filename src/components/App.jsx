@@ -30,7 +30,7 @@ export class App extends Component {
     if (prevState.page !== this.state.page) {
       try {
         const { total, hits } = await fetchImg({ page: this.state.page });
-        this.setState(prev => ({items:[...prev.items, ...hits]}));
+        this.setState(prev => ({items:[...prev.items, ...hits], total}));
 
       } catch (error) {
         
